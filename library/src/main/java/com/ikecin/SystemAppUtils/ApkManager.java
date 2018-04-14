@@ -62,12 +62,12 @@ public class ApkManager {
      * @param apk         apk文件
      * @param packageName 包名
      */
-    public static void installSilently(Context context, File apk, String packageName, ApkManagerObserver observer) {
-        Log.i(TAG, "Apk 路径：" + apk.getAbsolutePath() + packageName);
+    public static void installSilently(Context context, File apk, ApkManagerObserver observer) {
+        Log.i(TAG, "Apk 路径：" + apk.getAbsolutePath());
 
         try {
             checkApkFile(apk);
-            installSilently(context, Uri.fromFile(apk), packageName, observer);
+            installSilently(context, Uri.fromFile(apk), observer);
         } catch (Exception e) {
             if (observer != null) {
                 observer.error(e.getLocalizedMessage());
@@ -83,8 +83,8 @@ public class ApkManager {
      * @param packageName 包名
      */
     @SuppressWarnings("WeakerAccess")
-    public static void installSilently(Context context, Uri apkUri, String packageName, ApkManagerObserver observer) {
-        Log.i(TAG, "Apk Uri：" + apkUri.toString() + packageName);
+    public static void installSilently(Context context, Uri apkUri, ApkManagerObserver observer) {
+        Log.i(TAG, "Apk Uri：" + apkUri.toString());
 
         int installFlags = 0;
         installFlags |= PackageManager.INSTALL_REPLACE_EXISTING;
@@ -102,13 +102,13 @@ public class ApkManager {
                     }
 
                     //returnCode  1表示成功
-                    if (returnCode == 1) {
+                    if (returnCode == PackageManager.INSTALL_SUCCEEDED) {
                         observer.succeed();
                     } else {
                         observer.error(String.format(Locale.getDefault(), "uri=%s returnCode=%d", apkUri.toString(), returnCode));
                     }
                 }
-            }, installFlags, packageName);
+            }, installFlags, BuildConfig.APPLICATION_ID);//最后一个参数是安装来源的包名
         } catch (Exception e) {
             if (observer != null) {
                 observer.error(e.getLocalizedMessage());
@@ -137,7 +137,7 @@ public class ApkManager {
                     }
 
                     //returnCode  1表示成功
-                    if (returnCode == 1) {
+                    if (returnCode == PackageManager.DELETE_SUCCEEDED) {
                         observer.succeed();
                     } else {
                         observer.error(String.format(Locale.getDefault(), "returnCode=%d", returnCode));

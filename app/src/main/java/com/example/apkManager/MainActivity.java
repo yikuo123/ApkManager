@@ -37,9 +37,8 @@ public class MainActivity extends Activity {
         });
 
         findViewById(R.id.btnInstallSilently).setOnClickListener(v -> {
-            String packageName = editTextPackageName.getText().toString();
             String apkName = editTextApkName.getText().toString();
-            installSilently(mApkDir + apkName, packageName);
+            installSilently(mApkDir + apkName);
         });
 
         findViewById(R.id.btnUinstallSilently).setOnClickListener(v -> {
@@ -68,16 +67,16 @@ public class MainActivity extends Activity {
     }
 
     //静默安装
-    public void installSilently(String filePath, String packageName) {
-        ApkManager.installSilently(getApplicationContext(), new File(filePath), packageName, new ApkManager.ApkManagerObserver() {
+    public void installSilently(String filePath) {
+        ApkManager.installSilently(getApplicationContext(), new File(filePath), new ApkManager.ApkManagerObserver() {
             @Override
             public void error(String msg) {
-                Toast.makeText(getApplicationContext(), "安装失败：" + packageName + " " + msg, Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "安装失败：" + filePath + " " + msg, Toast.LENGTH_LONG).show();
             }
 
             @Override
             public void succeed() {
-                Toast.makeText(getApplicationContext(), "安装成功：" + packageName, Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "安装成功：" + filePath, Toast.LENGTH_LONG).show();
             }
         });
     }
