@@ -23,7 +23,7 @@ public class ApkOperateManager {
 
     //静默安装
     public static void installApkDefault(Context context, String fileName, String packageName) {
-        ApkManager.installSilently(context, new File(fileName), packageName, new ApkManager.InstallObserver() {
+        ApkManager.installSilently(context, new File(fileName), packageName, new ApkManager.ApkManagerObserver() {
             @Override
             public void error(String msg) {
                 Toast.makeText(context, "安装失败：" + packageName + " " + msg, Toast.LENGTH_LONG).show();
@@ -38,7 +38,7 @@ public class ApkOperateManager {
 
     //静默卸载
     public static void uninstallApkDefault(Context context, String packageName) {
-        ApkManager.uninstallSilently(context, packageName, new ApkManager.DeleteObserver() {
+        ApkManager.uninstallSilently(context, packageName, new ApkManager.ApkManagerObserver() {
             @Override
             public void error(String msg) {
                 Toast.makeText(context, "卸载失败：" + packageName + " " + msg, Toast.LENGTH_LONG).show();

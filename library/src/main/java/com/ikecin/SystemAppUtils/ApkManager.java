@@ -49,7 +49,7 @@ public class ApkManager {
      * @param apk         apk文件
      * @param packageName 包名
      */
-    public static void installSilently(Context context, File apk, String packageName, InstallObserver observer) {
+    public static void installSilently(Context context, File apk, String packageName, ApkManagerObserver observer) {
         Log.d(TAG, "Apk 路径：" + apk.getAbsolutePath() + packageName);
 
         try {
@@ -78,7 +78,7 @@ public class ApkManager {
      * @param packageName 包名
      */
     @SuppressWarnings("WeakerAccess")
-    public static void installSilently(Context context, Uri apkUri, String packageName, InstallObserver observer) {
+    public static void installSilently(Context context, Uri apkUri, String packageName, ApkManagerObserver observer) {
         Log.d(TAG, "Apk Uri：" + apkUri.toString() + packageName);
 
         int installFlags = 0;
@@ -110,7 +110,7 @@ public class ApkManager {
      * @param context     context
      * @param packageName 包名
      */
-    public static void uninstallSilently(Context context, String packageName, DeleteObserver observer) {
+    public static void uninstallSilently(Context context, String packageName, ApkManagerObserver observer) {
         Log.d(TAG, "开始静默卸载：" + packageName);
         PackageManager pm = context.getPackageManager();
         pm.deletePackage(packageName, new IPackageDeleteObserver.Stub() {
@@ -145,22 +145,9 @@ public class ApkManager {
     }
 
     /**
-     * 静默安装观察者
+     * ApkManager观察者
      */
-    public interface InstallObserver {
-        void succeed();
-
-        /**
-         * @param msg 错误信息
-         */
-        void error(String msg);
-
-    }
-
-    /**
-     * 静默卸载观察者
-     */
-    public interface DeleteObserver {
+    public interface ApkManagerObserver {
         void succeed();
 
         /**
