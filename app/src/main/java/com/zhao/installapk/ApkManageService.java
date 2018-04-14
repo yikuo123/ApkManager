@@ -53,10 +53,10 @@ public class ApkManageService extends Service {
             String filepath = intent.getStringExtra("apkpath");
             String pakcage = intent.getStringExtra("package");
             boolean isopen = intent.getBooleanExtra("isopen", false);
-            ApkOperateManager.installApkDefaul(this, filepath, pakcage, isopen);
+            ApkOperateManager.installApkDefault(this, filepath, pakcage, isopen);
         } else if (ACTION_UN_INSTALL_SILENT.equals(intent.getAction())) {
             String pakcage = intent.getStringExtra("package");
-            ApkOperateManager.uninstallApkDefaul(this, pakcage);
+            ApkOperateManager.uninstallApkDefault(this, pakcage);
         }
         return returnValue;
     }

@@ -49,7 +49,7 @@ public class ApkManager {
      * @param packageName 包名
      * @throws Exception 错误
      */
-    public static void installSilently(Context context, File apk, String packageName, MyPackageInstallObserver observer) throws Exception {
+    public static void installSilently(Context context, File apk, String packageName, InstallObserver observer) throws Exception {
         Log.d(TAG, "Apk 路径：" + apk.getAbsolutePath() + packageName);
 
         if (!apk.exists()) {
@@ -71,7 +71,7 @@ public class ApkManager {
      * @param packageName 包名
      */
     @SuppressWarnings("WeakerAccess")
-    public static void installSilently(Context context, Uri apkUri, String packageName, MyPackageInstallObserver observer) {
+    public static void installSilently(Context context, Uri apkUri, String packageName, InstallObserver observer) {
         Log.d(TAG, "Apk Uri：" + apkUri.toString() + packageName);
 
         int installFlags = 0;
@@ -87,7 +87,7 @@ public class ApkManager {
      * @param context     context
      * @param packageName 包名
      */
-    public static void uninstallSilently(Context context, String packageName, MyPackageDeleteObserver observer) {
+    public static void uninstallSilently(Context context, String packageName, DeleteObserver observer) {
         Log.d(TAG, "开始静默卸载：" + packageName);
         PackageManager pm = context.getPackageManager();
         pm.deletePackage(packageName, observer, 0);
@@ -108,8 +108,8 @@ public class ApkManager {
     /**
      * 静默安装观察者
      */
-    public static class MyPackageInstallObserver extends IPackageInstallObserver.Stub {
-        protected MyPackageInstallObserver() {
+    public static class InstallObserver extends IPackageInstallObserver.Stub {
+        protected InstallObserver() {
         }
 
         /**
@@ -126,8 +126,8 @@ public class ApkManager {
     /**
      * 静默卸载观察者
      */
-    public static class MyPackageDeleteObserver extends IPackageDeleteObserver.Stub {
-        protected MyPackageDeleteObserver() {
+    public static class DeleteObserver extends IPackageDeleteObserver.Stub {
+        protected DeleteObserver() {
         }
 
         /**
