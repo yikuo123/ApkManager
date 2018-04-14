@@ -16,17 +16,37 @@ import java.util.Locale;
 public class ApkManager {
     private static String TAG = ApkManager.class.getSimpleName();
 
+
     /**
      * 普通安装
      *
-     * @param context    context
-     * @param apkFileUri apk文件
+     * @param context context
+     * @param apk     apk文件
      */
-    public static void install(Context context, Uri apkFileUri) {
+    public static void install(Context context, File apk) throws Exception {
+        if (!apk.exists()) {
+            throw new Exception("Apk不存在:" + apk.getAbsolutePath());
+        }
+
+        if (!apk.canRead()) {
+            throw new Exception("Apk存在但无法读取：" + apk.getAbsolutePath());
+        }
+
+        install(context, Uri.fromFile(apk));
+    }
+
+    /**
+     * 普通安装
+     *
+     * @param context context
+     * @param apkUri  apk文件
+     */
+    @SuppressWarnings("WeakerAccess")
+    public static void install(Context context, Uri apkUri) {
         Intent intent = new Intent();
         intent.setAction(Intent.ACTION_VIEW);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.setDataAndType(apkFileUri, "application/vnd.android.package-archive");
+        intent.setDataAndType(apkUri, "application/vnd.android.package-archive");
         context.startActivity(intent);
     }
 
