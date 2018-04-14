@@ -175,7 +175,7 @@ public class ApkManager {
         }
 
         if (!apk.isFile()) {
-            throw new Exception("Apk文件不正确：" + apk.getAbsolutePath());
+            throw new Exception("不是Apk文件：" + apk.getAbsolutePath());
         }
     }
 
