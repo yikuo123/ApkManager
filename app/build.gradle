@@ -34,3 +34,10 @@ dependencies {
     implementation 'com.android.support:design:26.1.0'
     implementation project(':library')
 }
+
+try {
+    apply from: 'signing.gradle'
+    println "从 signing.gradle 中读取签名配置"
+} catch (ignored) {
+    println "signing.gradle 不存在,已忽略并使用默认签名配置"
+}
