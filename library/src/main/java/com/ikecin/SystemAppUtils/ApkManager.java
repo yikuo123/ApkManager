@@ -45,23 +45,40 @@ public class ApkManager {
      * 静默安装
      *
      * @param context     context
-     * @param apkFileUri  apk文件
+     * @param apk         apk文件
      * @param packageName 包名
      * @throws Exception 错误
      */
-    public static void installSilently(Context context, Uri apkFileUri, String packageName) throws Exception {
-        Log.d(TAG, "开始静默安装：" + apkFileUri.toString() + packageName);
-        File file = new File(fileName);
+    public static void installSilently(Context context, File apk, String packageName) throws Exception {
+        Log.d(TAG, "Apk 路径：" + apk.getAbsolutePath() + packageName);
 
-        if (!file.exists()) {
-            throw new Exception(apkFileUri.toString() + "文件不存在");
+        if (!apk.exists()) {
+            throw new Exception("文件不存在:" + apk.getAbsolutePath());
         }
+
+        if (!apk.canRead()) {
+            throw new Exception("文件存在但无法读取：" + apk.getAbsolutePath());
+        }
+
+        installSilently(context, Uri.fromFile(apk), packageName);
+    }
+
+    /**
+     * 静默安装
+     *
+     * @param context     context
+     * @param apkUri      apk文件
+     * @param packageName 包名
+     */
+    @SuppressWarnings("WeakerAccess")
+    public static void installSilently(Context context, Uri apkUri, String packageName) {
+        Log.d(TAG, "Apk Uri：" + apkUri.toString() + packageName);
 
         int installFlags = 0;
         installFlags |= PackageManager.INSTALL_REPLACE_EXISTING;
 
         PackageManager pm = context.getPackageManager();
-        pm.installPackage(Uri.fromFile(file), new MyPackageInstallObserver(), installFlags, packageName);
+        pm.installPackage(uri, new MyPackageInstallObserver(), installFlags, packageName);
     }
 
     /**
