@@ -3,6 +3,7 @@ package com.zhao.installapk;
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.Environment;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.ikecin.SystemAppUtils.ApkManager;
@@ -15,16 +16,41 @@ import java.io.File;
  */
 public class DemoActivity extends Activity {
 
-    private String filepath = Environment.getExternalStorageDirectory() + File.separator + "Download" + File.separator;
-
-    private String filename = "install.apk";
-
-    private String packagename = "com.zhao.aiddevicetest";
+    private String mApkDir = Environment.getExternalStorageDirectory() + File.separator + "Download" + File.separator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        EditText editTextPackageName = findViewById(R.id.packageName);
+        EditText editTextApkName = findViewById(R.id.apkName);
+
+        findViewById(R.id.btnInstall).setOnClickListener(v -> {
+            String apkName = editTextApkName.getText().toString();
+            install(mApkDir + apkName);
+        });
+
+        findViewById(R.id.btnUninstall).setOnClickListener(v -> {
+            String packageName = editTextPackageName.getText().toString();
+            uninstall(packageName);
+        });
+
+        findViewById(R.id.btnInstallSilently).setOnClickListener(v -> {
+            String packageName = editTextPackageName.getText().toString();
+            String apkName = editTextApkName.getText().toString();
+            installSilently(mApkDir + apkName, packageName);
+        });
+
+        findViewById(R.id.btnUinstallSilently).setOnClickListener(v -> {
+            String packageName = editTextPackageName.getText().toString();
+            uninstallSilently(packageName);
+        });
+
+        findViewById(R.id.btnLaunch).setOnClickListener(v -> {
+            String packageName = editTextPackageName.getText().toString();
+            launchApp(packageName);
+        });
     }
 
     //安装apk
