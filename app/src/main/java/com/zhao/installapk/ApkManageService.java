@@ -52,8 +52,7 @@ public class ApkManageService extends Service {
         if (ACTION_INSTALL_SILENT.equals(intent.getAction())) {
             String filepath = intent.getStringExtra("apkpath");
             String pakcage = intent.getStringExtra("package");
-            boolean isopen = intent.getBooleanExtra("isopen", false);
-            ApkOperateManager.installApkDefault(this, filepath, pakcage, isopen);
+            ApkOperateManager.installApkDefault(this, filepath, pakcage);
         } else if (ACTION_UN_INSTALL_SILENT.equals(intent.getAction())) {
             String pakcage = intent.getStringExtra("package");
             ApkOperateManager.uninstallApkDefault(this, pakcage);
