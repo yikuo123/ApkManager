@@ -8,6 +8,8 @@ import android.content.pm.IPackageDeleteObserver;
 import android.content.pm.IPackageInstallObserver;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Handler;
+import android.os.Looper;
 import android.os.RemoteException;
 import android.util.Log;
 
@@ -101,12 +103,14 @@ public class ApkManager {
                         return;
                     }
 
-                    //returnCode  1表示成功
-                    if (returnCode == PackageManager.INSTALL_SUCCEEDED) {
-                        observer.succeed();
-                    } else {
-                        observer.error(String.format(Locale.getDefault(), "uri=%s returnCode=%d", apkUri.toString(), returnCode));
-                    }
+                    new Handler(Looper.getMainLooper()).post(() -> {
+                        //returnCode  1表示成功
+                        if (returnCode == PackageManager.INSTALL_SUCCEEDED) {
+                            observer.succeed();
+                        } else {
+                            observer.error(String.format(Locale.getDefault(), "uri=%s returnCode=%d", apkUri.toString(), returnCode));
+                        }
+                    });
                 }
             }, installFlags, BuildConfig.APPLICATION_ID);//最后一个参数是安装来源的包名
         } catch (Exception e) {
@@ -136,12 +140,14 @@ public class ApkManager {
                         return;
                     }
 
-                    //returnCode  1表示成功
-                    if (returnCode == PackageManager.DELETE_SUCCEEDED) {
-                        observer.succeed();
-                    } else {
-                        observer.error(String.format(Locale.getDefault(), "returnCode=%d", returnCode));
-                    }
+                    new Handler(Looper.getMainLooper()).post(() -> {
+                        //returnCode  1表示成功
+                        if (returnCode == PackageManager.DELETE_SUCCEEDED) {
+                            observer.succeed();
+                        } else {
+                            observer.error(String.format(Locale.getDefault(), "returnCode=%d", returnCode));
+                        }
+                    });
                 }
             }, 0);
         } catch (Exception e) {
