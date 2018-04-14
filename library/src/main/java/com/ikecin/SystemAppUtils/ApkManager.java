@@ -32,6 +32,10 @@ public class ApkManager {
             throw new Exception("Apk存在但无法读取：" + apk.getAbsolutePath());
         }
 
+        if (!apk.isFile()) {
+            throw new Exception("Apk文件不正确：" + apk.getAbsolutePath());
+        }
+
         install(context, Uri.fromFile(apk));
     }
 
@@ -79,6 +83,10 @@ public class ApkManager {
 
             if (!apk.canRead()) {
                 throw new Exception("Apk存在但无法读取：" + apk.getAbsolutePath());
+            }
+
+            if (!apk.isFile()) {
+                throw new Exception("Apk文件不正确：" + apk.getAbsolutePath());
             }
 
             installSilently(context, Uri.fromFile(apk), packageName, observer);
@@ -172,12 +180,11 @@ public class ApkManager {
      * @param context     context
      * @param packageName 包名
      */
-    public static void launchPackage(Context context, String packageName) {
+    public static void launchPackage(Context context, String packageName) throws Exception {
         PackageManager packManager = context.getPackageManager();
         Intent resolveIntent = packManager.getLaunchIntentForPackage(packageName);
         if (resolveIntent == null) {
-            Log.e(TAG, "app不存在：" + packageName);
-            return;
+            throw new Exception(packageName + "不存在");
         }
         context.startActivity(resolveIntent);
     }

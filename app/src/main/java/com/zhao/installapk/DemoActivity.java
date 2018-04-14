@@ -58,7 +58,7 @@ public class DemoActivity extends Activity {
         try {
             ApkManager.install(getApplicationContext(), new File(filePath));
         } catch (Exception e) {
-            Toast.makeText(getApplicationContext(), "安装失败：" + filePath, Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "安装失败：" + e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
         }
     }
 
@@ -99,6 +99,10 @@ public class DemoActivity extends Activity {
 
     //启动应用
     public void launchApp(String packageName) {
-        ApkManager.launchPackage(getApplicationContext(), packageName);
+        try {
+            ApkManager.launchPackage(getApplicationContext(), packageName);
+        } catch (Exception e) {
+            Toast.makeText(getApplicationContext(), "启动失败：" + e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+        }
     }
 }
