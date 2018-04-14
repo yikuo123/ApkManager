@@ -24,18 +24,7 @@ public class ApkManager {
      * @param apk     apk文件
      */
     public static void install(Context context, File apk) throws Exception {
-        if (!apk.exists()) {
-            throw new Exception("Apk不存在:" + apk.getAbsolutePath());
-        }
-
-        if (!apk.canRead()) {
-            throw new Exception("Apk存在但无法读取：" + apk.getAbsolutePath());
-        }
-
-        if (!apk.isFile()) {
-            throw new Exception("Apk文件不正确：" + apk.getAbsolutePath());
-        }
-
+        checkApkFile(apk);
         install(context, Uri.fromFile(apk));
     }
 
@@ -77,20 +66,8 @@ public class ApkManager {
         Log.i(TAG, "Apk 路径：" + apk.getAbsolutePath() + packageName);
 
         try {
-            if (!apk.exists()) {
-                throw new Exception("Apk不存在:" + apk.getAbsolutePath());
-            }
-
-            if (!apk.canRead()) {
-                throw new Exception("Apk存在但无法读取：" + apk.getAbsolutePath());
-            }
-
-            if (!apk.isFile()) {
-                throw new Exception("Apk文件不正确：" + apk.getAbsolutePath());
-            }
-
+            checkApkFile(apk);
             installSilently(context, Uri.fromFile(apk), packageName, observer);
-
         } catch (Exception e) {
             if (observer != null) {
                 observer.error(e.getLocalizedMessage());
@@ -187,6 +164,20 @@ public class ApkManager {
             throw new Exception(packageName + "不存在");
         }
         context.startActivity(resolveIntent);
+    }
+
+    private static void checkApkFile(File apk) throws Exception {
+        if (!apk.exists()) {
+            throw new Exception("Apk不存在:" + apk.getAbsolutePath());
+        }
+
+        if (!apk.canRead()) {
+            throw new Exception("Apk存在但无法读取：" + apk.getAbsolutePath());
+        }
+
+        if (!apk.isFile()) {
+            throw new Exception("Apk文件不正确：" + apk.getAbsolutePath());
+        }
     }
 
     /**
