@@ -1,116 +1,48 @@
 package com.zhao.installapk;
 
-import java.io.File;
-
-import android.app.AlarmManager;
-import android.app.PendingIntent;
-import android.app.Service;
 import android.content.Context;
-import android.content.Intent;
-import android.content.pm.IPackageDeleteObserver;
-import android.content.pm.IPackageInstallObserver;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.RemoteException;
-import android.util.Log;
+import android.widget.Toast;
+
+import com.ikecin.SystemAppUtils.ApkManager;
+
+import java.io.File;
 
 
 public class ApkOperateManager {
-    public static String TAG = "ApkOperateManager";
-    public static final String EXCUTOR_RESULT = "com.zhao.install.EXCUTOR_RESULT";
 
     //安装apk
     public static void installApk(Context context, String fileName) {
-        Intent intent = new Intent();
-        intent.setAction(Intent.ACTION_VIEW);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.setDataAndType(Uri.parse("file://" + fileName),
-                "application/vnd.android.package-archive");
-        context.startActivity(intent);
+        ApkManager.install(context, Uri.parse("file://" + fileName));
     }
 
     //卸载apk
     public static void uninstallApk(Context context, String packageName) {
-        Uri uri = Uri.parse("package:" + packageName);
-        Intent intent = new Intent(Intent.ACTION_DELETE, uri);
-        context.startActivity(intent);
+        ApkManager.uninstall(context, packageName);
     }
 
     //静默安装
     public static void installApkDefaul(Context context, String fileName, String pakcageName, boolean isopen) {
-        Log.d(TAG, "jing mo an zhuang");
-        File file = new File(fileName);
-        int installFlags = 0;
-        if (!file.exists())
-            return;
-        Log.d(TAG, "jing mo an zhuang  out");
-        installFlags |= PackageManager.INSTALL_REPLACE_EXISTING;
-        PackageManager pm = context.getPackageManager();
-        IPackageInstallObserver observer = new MyPakcageInstallObserver(context, pakcageName, isopen);
-        pm.installPackage(Uri.fromFile(file), observer, installFlags, pakcageName);
+        try {
+            ApkManager.installSilently(context, new File(fileName), pakcageName, new ApkManager.MyPackageInstallObserver() {
+                @Override
+                public void packageInstalled(String packageName, int returnCode) throws RemoteException {
+                    super.packageInstalled(packageName, returnCode);
+                }
+            });
+        } catch (Exception e) {
+            Toast.makeText(context, e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+        }
     }
 
     //静默卸载
     public static void uninstallApkDefaul(Context context, String packageName) {
-        PackageManager pm = context.getPackageManager();
-        IPackageDeleteObserver observer = new MyPackageDeleteObserver(context);
-        pm.deletePackage(packageName, observer, 0);
-    }
-
-    //2秒后回馈结果
-    private static void sendResultCode(Context context, int returnCode,
-                                       String packageName) {
-        Intent mResultIntent = new Intent(EXCUTOR_RESULT);
-        mResultIntent.putExtra("result", returnCode);
-        mResultIntent.putExtra("package", packageName);
-        AlarmManager alarmManager = (AlarmManager) context
-                .getSystemService(Service.ALARM_SERVICE);
-        PendingIntent pendingIntentExprie = PendingIntent.getBroadcast(context,
-                0, mResultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        alarmManager.set(AlarmManager.RTC,
-                System.currentTimeMillis() + 2 * 1000, pendingIntentExprie);
-    }
-
-
-    //静默安装回调
-    private static class MyPakcageInstallObserver extends IPackageInstallObserver.Stub {
-        private static final PackageManager Intent = null;
-        Context context;
-        String packageName;
-        boolean isOpen;
-
-        MyPakcageInstallObserver(Context conext, String packageName, boolean isopen) {
-            this.context = conext;
-            this.packageName = packageName;
-            this.isOpen = isopen;
-        }
-
-        @Override
-        public void packageInstalled(String packageName, int returnCode)
-                throws RemoteException {
-            Log.i(TAG, "returnCode = " + returnCode);//返回1代表安装成功
-            sendResultCode(context,returnCode, packageName);
-            if (isOpen) {
-                // 启动目标应用
-                PackageManager packManager = context.getPackageManager();
-                // 这里的packageName就是从上面得到的目标apk的包名
-                Intent resolveIntent = packManager.getLaunchIntentForPackage(packageName);
-                context.startActivity(resolveIntent);
+        ApkManager.uninstallSilently(context, packageName, new ApkManager.MyPackageDeleteObserver() {
+            @Override
+            public void packageDeleted(String packageName, int returnCode) {
+                super.packageDeleted(packageName, returnCode);
             }
-        }
-    }
-
-    //静默卸载回调
-    private static class MyPackageDeleteObserver extends IPackageDeleteObserver.Stub {
-        Context context;
-        MyPackageDeleteObserver(Context context){
-            this.context = context;
-        }
-        @Override
-        public void packageDeleted(String packageName, int returnCode) {
-            Log.d(TAG, "returnCode = " + returnCode);//返回1代表卸载成功
-            sendResultCode(context,returnCode, packageName);
-        }
-
+        });
     }
 }

@@ -49,7 +49,7 @@ public class ApkManager {
      * @param packageName 包名
      * @throws Exception 错误
      */
-    public static void installSilently(Context context, File apk, String packageName) throws Exception {
+    public static void installSilently(Context context, File apk, String packageName, MyPackageInstallObserver observer) throws Exception {
         Log.d(TAG, "Apk 路径：" + apk.getAbsolutePath() + packageName);
 
         if (!apk.exists()) {
@@ -60,7 +60,7 @@ public class ApkManager {
             throw new Exception("文件存在但无法读取：" + apk.getAbsolutePath());
         }
 
-        installSilently(context, Uri.fromFile(apk), packageName);
+        installSilently(context, Uri.fromFile(apk), packageName, observer);
     }
 
     /**
@@ -71,14 +71,14 @@ public class ApkManager {
      * @param packageName 包名
      */
     @SuppressWarnings("WeakerAccess")
-    public static void installSilently(Context context, Uri apkUri, String packageName) {
+    public static void installSilently(Context context, Uri apkUri, String packageName, MyPackageInstallObserver observer) {
         Log.d(TAG, "Apk Uri：" + apkUri.toString() + packageName);
 
         int installFlags = 0;
         installFlags |= PackageManager.INSTALL_REPLACE_EXISTING;
 
         PackageManager pm = context.getPackageManager();
-        pm.installPackage(uri, new MyPackageInstallObserver(), installFlags, packageName);
+        pm.installPackage(uri, observer, installFlags, packageName);
     }
 
     /**
@@ -87,10 +87,10 @@ public class ApkManager {
      * @param context     context
      * @param packageName 包名
      */
-    public static void uninstallSilently(Context context, String packageName) {
+    public static void uninstallSilently(Context context, String packageName, MyPackageDeleteObserver observer) {
         Log.d(TAG, "开始静默卸载：" + packageName);
         PackageManager pm = context.getPackageManager();
-        pm.deletePackage(packageName, new MyPackageDeleteObserver(), 0);
+        pm.deletePackage(packageName, observer, 0);
     }
 
     /**
@@ -109,7 +109,7 @@ public class ApkManager {
      * 静默安装观察者
      */
     public static class MyPackageInstallObserver extends IPackageInstallObserver.Stub {
-        MyPackageInstallObserver() {
+        protected MyPackageInstallObserver() {
         }
 
         /**
@@ -127,7 +127,7 @@ public class ApkManager {
      * 静默卸载观察者
      */
     public static class MyPackageDeleteObserver extends IPackageDeleteObserver.Stub {
-        MyPackageDeleteObserver() {
+        protected MyPackageDeleteObserver() {
         }
 
         /**
