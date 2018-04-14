@@ -70,7 +70,7 @@ public class ApkManager {
      * @param packageName 包名
      */
     public static void installSilently(Context context, File apk, String packageName, ApkManagerObserver observer) {
-        Log.d(TAG, "Apk 路径：" + apk.getAbsolutePath() + packageName);
+        Log.i(TAG, "Apk 路径：" + apk.getAbsolutePath() + packageName);
 
         try {
             if (!apk.exists()) {
@@ -99,29 +99,36 @@ public class ApkManager {
      */
     @SuppressWarnings("WeakerAccess")
     public static void installSilently(Context context, Uri apkUri, String packageName, ApkManagerObserver observer) {
-        Log.d(TAG, "Apk Uri：" + apkUri.toString() + packageName);
+        Log.i(TAG, "Apk Uri：" + apkUri.toString() + packageName);
 
         int installFlags = 0;
         installFlags |= PackageManager.INSTALL_REPLACE_EXISTING;
 
         PackageManager pm = context.getPackageManager();
-        pm.installPackage(apkUri, new IPackageInstallObserver.Stub() {
-            @Override
-            public void packageInstalled(String packageName, int returnCode) throws RemoteException {
-                Log.i(TAG, String.format("静默安装：package=%s uri=%s returnCode=%d", packageName, apkUri.toString(), returnCode));
 
-                if (observer == null) {
-                    return;
-                }
+        try {
+            pm.installPackage(apkUri, new IPackageInstallObserver.Stub() {
+                @Override
+                public void packageInstalled(String packageName, int returnCode) throws RemoteException {
+                    Log.i(TAG, String.format("静默安装：package=%s uri=%s returnCode=%d", packageName, apkUri.toString(), returnCode));
 
-                //returnCode  1表示成功
-                if (returnCode == 1) {
-                    observer.succeed();
-                } else {
-                    observer.error(String.format(Locale.getDefault(), "uri=%s returnCode=%d", apkUri.toString(), returnCode));
+                    if (observer == null) {
+                        return;
+                    }
+
+                    //returnCode  1表示成功
+                    if (returnCode == 1) {
+                        observer.succeed();
+                    } else {
+                        observer.error(String.format(Locale.getDefault(), "uri=%s returnCode=%d", apkUri.toString(), returnCode));
+                    }
                 }
+            }, installFlags, packageName);
+        } catch (Exception e) {
+            if (observer != null) {
+                observer.error(e.getLocalizedMessage());
             }
-        }, installFlags, packageName);
+        }
     }
 
     /**
@@ -131,25 +138,32 @@ public class ApkManager {
      * @param packageName 包名
      */
     public static void uninstallSilently(Context context, String packageName, ApkManagerObserver observer) {
-        Log.d(TAG, "开始静默卸载：" + packageName);
+        Log.i(TAG, "静默卸载：" + packageName);
         PackageManager pm = context.getPackageManager();
-        pm.deletePackage(packageName, new IPackageDeleteObserver.Stub() {
-            @Override
-            public void packageDeleted(String packageName, int returnCode) throws RemoteException {
-                Log.i(TAG, String.format("静默卸载：package=%s returnCode=%d", packageName, returnCode));
 
-                if (observer == null) {
-                    return;
-                }
+        try {
+            pm.deletePackage(packageName, new IPackageDeleteObserver.Stub() {
+                @Override
+                public void packageDeleted(String packageName, int returnCode) throws RemoteException {
+                    Log.i(TAG, String.format("静默卸载：package=%s returnCode=%d", packageName, returnCode));
 
-                //returnCode  1表示成功
-                if (returnCode == 1) {
-                    observer.succeed();
-                } else {
-                    observer.error(String.format(Locale.getDefault(), "returnCode=%d", returnCode));
+                    if (observer == null) {
+                        return;
+                    }
+
+                    //returnCode  1表示成功
+                    if (returnCode == 1) {
+                        observer.succeed();
+                    } else {
+                        observer.error(String.format(Locale.getDefault(), "returnCode=%d", returnCode));
+                    }
                 }
+            }, 0);
+        } catch (Exception e) {
+            if (observer != null) {
+                observer.error(e.getLocalizedMessage());
             }
-        }, 0);
+        }
     }
 
     /**
@@ -161,6 +175,10 @@ public class ApkManager {
     public static void launchPackage(Context context, String packageName) {
         PackageManager packManager = context.getPackageManager();
         Intent resolveIntent = packManager.getLaunchIntentForPackage(packageName);
+        if (resolveIntent == null) {
+            Log.e(TAG, "app不存在：" + packageName);
+            return;
+        }
         context.startActivity(resolveIntent);
     }
 
