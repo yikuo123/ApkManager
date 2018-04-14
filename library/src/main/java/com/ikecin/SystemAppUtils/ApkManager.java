@@ -11,6 +11,7 @@ import android.os.RemoteException;
 import android.util.Log;
 
 import java.io.File;
+import java.util.Locale;
 
 public class ApkManager {
     private static String TAG = ApkManager.class.getSimpleName();
@@ -47,20 +48,26 @@ public class ApkManager {
      * @param context     context
      * @param apk         apk文件
      * @param packageName 包名
-     * @throws Exception 错误
      */
-    public static void installSilently(Context context, File apk, String packageName, InstallObserver observer) throws Exception {
+    public static void installSilently(Context context, File apk, String packageName, InstallObserver observer) {
         Log.d(TAG, "Apk 路径：" + apk.getAbsolutePath() + packageName);
 
-        if (!apk.exists()) {
-            throw new Exception("文件不存在:" + apk.getAbsolutePath());
-        }
+        try {
+            if (!apk.exists()) {
+                throw new Exception("Apk不存在:" + apk.getAbsolutePath());
+            }
 
-        if (!apk.canRead()) {
-            throw new Exception("文件存在但无法读取：" + apk.getAbsolutePath());
-        }
+            if (!apk.canRead()) {
+                throw new Exception("Apk存在但无法读取：" + apk.getAbsolutePath());
+            }
 
-        installSilently(context, Uri.fromFile(apk), packageName, observer);
+            installSilently(context, Uri.fromFile(apk), packageName, observer);
+
+        } catch (Exception e) {
+            if (observer != null) {
+                observer.error(e.getLocalizedMessage());
+            }
+        }
     }
 
     /**
@@ -78,7 +85,23 @@ public class ApkManager {
         installFlags |= PackageManager.INSTALL_REPLACE_EXISTING;
 
         PackageManager pm = context.getPackageManager();
-        pm.installPackage(uri, observer, installFlags, packageName);
+        pm.installPackage(apkUri, new IPackageInstallObserver.Stub() {
+            @Override
+            public void packageInstalled(String packageName, int returnCode) throws RemoteException {
+                Log.i(TAG, String.format("静默安装：package=%s uri=%s returnCode=%d", packageName, apkUri.toString(), returnCode));
+
+                if (observer == null) {
+                    return;
+                }
+
+                //returnCode  1表示成功
+                if (returnCode == 1) {
+                    observer.succeed();
+                } else {
+                    observer.error(String.format(Locale.getDefault(), "uri=%s returnCode=%d", apkUri.toString(), returnCode));
+                }
+            }
+        }, installFlags, packageName);
     }
 
     /**
@@ -90,7 +113,23 @@ public class ApkManager {
     public static void uninstallSilently(Context context, String packageName, DeleteObserver observer) {
         Log.d(TAG, "开始静默卸载：" + packageName);
         PackageManager pm = context.getPackageManager();
-        pm.deletePackage(packageName, observer, 0);
+        pm.deletePackage(packageName, new IPackageDeleteObserver.Stub() {
+            @Override
+            public void packageDeleted(String packageName, int returnCode) throws RemoteException {
+                Log.i(TAG, String.format("静默卸载：package=%s returnCode=%d", packageName, returnCode));
+
+                if (observer == null) {
+                    return;
+                }
+
+                //returnCode  1表示成功
+                if (returnCode == 1) {
+                    observer.succeed();
+                } else {
+                    observer.error(String.format(Locale.getDefault(), "returnCode=%d", returnCode));
+                }
+            }
+        }, 0);
     }
 
     /**
@@ -108,35 +147,26 @@ public class ApkManager {
     /**
      * 静默安装观察者
      */
-    public static class InstallObserver extends IPackageInstallObserver.Stub {
-        protected InstallObserver() {
-        }
+    public interface InstallObserver {
+        void succeed();
 
         /**
-         * @param packageName 包名
-         * @param returnCode  1表示成功
+         * @param msg 错误信息
          */
-        @Override
-        public void packageInstalled(String packageName, int returnCode) throws RemoteException {
-            Log.d(TAG, "静默安装执行结果：" + packageName + (returnCode == 1 ? "成功" : "失败"));
+        void error(String msg);
 
-        }
     }
 
     /**
      * 静默卸载观察者
      */
-    public static class DeleteObserver extends IPackageDeleteObserver.Stub {
-        protected DeleteObserver() {
-        }
+    public interface DeleteObserver {
+        void succeed();
 
         /**
-         * @param packageName 包名
-         * @param returnCode  1表示成功
+         * @param msg 错误信息
          */
-        @Override
-        public void packageDeleted(String packageName, int returnCode) {
-            Log.d(TAG, "静默卸载执行结果：" + packageName + (returnCode == 1 ? "成功" : "失败"));
-        }
+        void error(String msg);
+
     }
 }

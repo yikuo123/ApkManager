@@ -2,7 +2,6 @@ package com.zhao.installapk;
 
 import android.content.Context;
 import android.net.Uri;
-import android.os.RemoteException;
 import android.widget.Toast;
 
 import com.ikecin.SystemAppUtils.ApkManager;
@@ -24,24 +23,30 @@ public class ApkOperateManager {
 
     //静默安装
     public static void installApkDefault(Context context, String fileName, String packageName) {
-        try {
-            ApkManager.installSilently(context, new File(fileName), packageName, new ApkManager.InstallObserver() {
-                @Override
-                public void packageInstalled(String packageName, int returnCode) throws RemoteException {
-                    super.packageInstalled(packageName, returnCode);
-                }
-            });
-        } catch (Exception e) {
-            Toast.makeText(context, e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-        }
+        ApkManager.installSilently(context, new File(fileName), packageName, new ApkManager.InstallObserver() {
+            @Override
+            public void error(String msg) {
+                Toast.makeText(context, "安装失败：" + packageName + " " + msg, Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void succeed() {
+                Toast.makeText(context, "安装成功：" + packageName, Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     //静默卸载
     public static void uninstallApkDefault(Context context, String packageName) {
         ApkManager.uninstallSilently(context, packageName, new ApkManager.DeleteObserver() {
             @Override
-            public void packageDeleted(String packageName, int returnCode) {
-                super.packageDeleted(packageName, returnCode);
+            public void error(String msg) {
+                Toast.makeText(context, "卸载失败：" + packageName + " " + msg, Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void succeed() {
+                Toast.makeText(context, "卸载成功：" + packageName, Toast.LENGTH_LONG).show();
             }
         });
     }
