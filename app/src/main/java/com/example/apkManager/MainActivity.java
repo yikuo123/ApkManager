@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.os.Environment;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ikecin.SystemAppUtils.ApkManager;
@@ -21,6 +22,8 @@ public class MainActivity extends Activity {
 
         EditText editTextPackageName = findViewById(R.id.packageName);
         EditText editTextApkName = findViewById(R.id.apkName);
+
+        ((TextView) findViewById(R.id.textUID)).setText("UID=" + ApkManager.getUid(this));
 
         findViewById(R.id.btnInstall).setOnClickListener(v -> {
             String apkName = editTextApkName.getText().toString();
@@ -96,7 +99,7 @@ public class MainActivity extends Activity {
     //启动应用
     public void launchApp(String packageName) {
         try {
-            ApkManager.launchPackage(getApplicationContext(), packageName);
+            ApkManager.launchApp(getApplicationContext(), packageName);
         } catch (Exception e) {
             Toast.makeText(getApplicationContext(), "启动失败：" + e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
         }

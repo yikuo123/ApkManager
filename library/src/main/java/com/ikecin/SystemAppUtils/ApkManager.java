@@ -3,6 +3,7 @@ package com.ikecin.SystemAppUtils;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.IPackageDeleteObserver;
 import android.content.pm.IPackageInstallObserver;
 import android.content.pm.PackageManager;
@@ -156,7 +157,7 @@ public class ApkManager {
      * @param context     context
      * @param packageName 包名
      */
-    public static void launchPackage(Context context, String packageName) throws Exception {
+    public static void launchApp(Context context, String packageName) throws Exception {
         PackageManager packManager = context.getPackageManager();
         Intent resolveIntent = packManager.getLaunchIntentForPackage(packageName);
         if (resolveIntent == null) {
@@ -176,6 +177,17 @@ public class ApkManager {
 
         if (!apk.isFile()) {
             throw new Exception("不是Apk文件：" + apk.getAbsolutePath());
+        }
+    }
+
+    public static String getUid(Context context) {
+        try {
+            PackageManager pm = context.getPackageManager();
+            ApplicationInfo ai = pm.getApplicationInfo(BuildConfig.APPLICATION_ID, PackageManager.GET_META_DATA);
+            return Integer.toString(ai.uid, 10);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+            return "unknown";
         }
     }
 
