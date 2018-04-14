@@ -1,4 +1,4 @@
-package com.zhao.installapk;
+package com.example.apkManager;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -10,11 +10,7 @@ import com.ikecin.SystemAppUtils.ApkManager;
 
 import java.io.File;
 
-/**
- * @author zhao
- * 测试Activity
- */
-public class DemoActivity extends Activity {
+public class MainActivity extends Activity {
 
     private String mApkDir = Environment.getExternalStorageDirectory() + File.separator + "Download" + File.separator;
 

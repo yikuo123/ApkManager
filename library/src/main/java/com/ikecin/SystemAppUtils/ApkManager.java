@@ -16,7 +16,6 @@ import java.util.Locale;
 public class ApkManager {
     private static String TAG = ApkManager.class.getSimpleName();
 
-
     /**
      * 普通安装
      *
