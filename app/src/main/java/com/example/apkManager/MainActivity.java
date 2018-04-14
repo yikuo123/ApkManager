@@ -1,6 +1,7 @@
 package com.example.apkManager;
 
 import android.app.Activity;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Environment;
 import android.widget.EditText;
@@ -23,7 +24,7 @@ public class MainActivity extends Activity {
         EditText editTextPackageName = findViewById(R.id.packageName);
         EditText editTextApkName = findViewById(R.id.apkName);
 
-        ((TextView) findViewById(R.id.textUID)).setText("UID=" + ApkManager.getUid(this));
+        ((TextView) findViewById(R.id.textUID)).setText("UID=" + getUid());
 
         findViewById(R.id.btnInstall).setOnClickListener(v -> {
             String apkName = editTextApkName.getText().toString();
@@ -102,6 +103,14 @@ public class MainActivity extends Activity {
             ApkManager.launchApp(getApplicationContext(), packageName);
         } catch (Exception e) {
             Toast.makeText(getApplicationContext(), "启动失败：" + e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    public String getUid() {
+        try {
+            return ApkManager.getUid(this, BuildConfig.APPLICATION_ID);
+        } catch (PackageManager.NameNotFoundException e) {
+            return "包名错误";
         }
     }
 }

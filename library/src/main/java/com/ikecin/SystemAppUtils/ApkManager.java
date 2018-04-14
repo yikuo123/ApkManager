@@ -180,15 +180,10 @@ public class ApkManager {
         }
     }
 
-    public static String getUid(Context context) {
-        try {
-            PackageManager pm = context.getPackageManager();
-            ApplicationInfo ai = pm.getApplicationInfo(BuildConfig.APPLICATION_ID, PackageManager.GET_META_DATA);
-            return Integer.toString(ai.uid, 10);
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-            return "unknown";
-        }
+    public static String getUid(Context context, String packageName) throws PackageManager.NameNotFoundException {
+        PackageManager pm = context.getPackageManager();
+        ApplicationInfo ai = pm.getApplicationInfo(packageName, PackageManager.GET_META_DATA);
+        return Integer.toString(ai.uid, 10);
     }
 
     /**
