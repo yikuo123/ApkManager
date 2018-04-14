@@ -1,13 +1,13 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           xmlns:tools="http://schemas.android.com/tools"
-          package="com.example.jitpack.library"
+          package="com.ikecin.SystemAppUtils"
           android:sharedUserId="android.uid.system">
 
     <uses-permission android:name="android.permission.INSTALL_PACKAGES" tools:ignore="ProtectedPermissions"/>
     <uses-permission android:name="android.permission.DELETE_PACKAGES" tools:ignore="ProtectedPermissions"/>
 
-    <application
-        android:label="@string/app_name">
+    <application android:label="@string/app_name">
+
     </application>
 
 </manifest>
