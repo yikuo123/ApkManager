@@ -17,14 +17,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="请输入包名"
-        android:lines="1"/>
+        android:singleLine="true"/>
 
     <EditText
         android:id="@+id/apkName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="apk名称,需放入Download目录"
-        android:lines="1"/>
+        android:singleLine="true"/>
 
     <Button
         android:id="@+id/btnInstall"
