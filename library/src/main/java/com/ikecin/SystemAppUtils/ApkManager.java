@@ -62,7 +62,6 @@ public class ApkManager {
      *
      * @param context     context
      * @param apk         apk文件
-     * @param packageName 包名
      */
     public static void installSilently(Context context, File apk, ApkManagerObserver observer) {
         Log.i(TAG, "Apk 路径：" + apk.getAbsolutePath());
@@ -82,7 +81,6 @@ public class ApkManager {
      *
      * @param context     context
      * @param apkUri      apk文件
-     * @param packageName 包名
      */
     @SuppressWarnings("WeakerAccess")
     public static void installSilently(Context context, Uri apkUri, ApkManagerObserver observer) {
