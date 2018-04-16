@@ -1,3 +1,5 @@
+[![](https://jitpack.io/v/yikuo123/ApkManager.svg)](https://jitpack.io/#yikuo123/ApkManager)
+
 # ApkManager
 
 可以实现静默安装、卸载App
