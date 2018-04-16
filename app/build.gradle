@@ -4,8 +4,8 @@ android {
     compileSdkVersion 26
     buildToolsVersion "26.0.3"
     defaultConfig {
-        applicationId "com.example.apkmanager"
-        minSdkVersion 17
+        applicationId "com.example.apkManager"
+        minSdkVersion 19
         targetSdkVersion 22
         versionCode 1
         versionName "1.0.0"
