@@ -1,16 +1,22 @@
 package com.ikecin.SystemAppUtils;
 
 
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.IPackageDeleteObserver;
 import android.content.pm.IPackageInstallObserver;
+import android.content.pm.PackageInstaller;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.RemoteException;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.util.Log;
 
 import java.io.File;
@@ -25,7 +31,7 @@ public class ApkManager {
      * @param context context
      * @param apk     apk文件
      */
-    public static void install(Context context, File apk) throws Exception {
+    public static void install(Context context, @NonNull File apk) throws Exception {
         checkApkFile(apk);
         install(context, Uri.fromFile(apk));
     }
@@ -37,7 +43,7 @@ public class ApkManager {
      * @param apkUri  apk文件
      */
     @SuppressWarnings("WeakerAccess")
-    public static void install(Context context, Uri apkUri) {
+    public static void install(Context context, @NonNull Uri apkUri) {
         Intent intent = new Intent();
         intent.setAction(Intent.ACTION_VIEW);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -51,7 +57,7 @@ public class ApkManager {
      * @param context     context
      * @param packageName 包名
      */
-    public static void uninstall(Context context, String packageName) {
+    public static void uninstall(Context context, @NonNull String packageName) {
         Uri uri = Uri.parse("package:" + packageName);
         Intent intent = new Intent(Intent.ACTION_DELETE, uri);
         context.startActivity(intent);
@@ -60,10 +66,10 @@ public class ApkManager {
     /**
      * 静默安装
      *
-     * @param context     context
-     * @param apk         apk文件
+     * @param context context
+     * @param apk     apk文件
      */
-    public static void installSilently(Context context, File apk, ApkManagerObserver observer) {
+    public static void installSilently(Context context, @NonNull File apk, @Nullable ApkManagerObserver observer) {
         Log.i(TAG, "Apk 路径：" + apk.getAbsolutePath());
 
         try {
@@ -79,11 +85,11 @@ public class ApkManager {
     /**
      * 静默安装
      *
-     * @param context     context
-     * @param apkUri      apk文件
+     * @param context context
+     * @param apkUri  apk文件
      */
     @SuppressWarnings("WeakerAccess")
-    public static void installSilently(Context context, Uri apkUri, ApkManagerObserver observer) {
+    public static void installSilently(Context context, @NonNull Uri apkUri, @Nullable ApkManagerObserver observer) {
         Log.i(TAG, "Apk Uri：" + apkUri.toString());
 
         int installFlags = 0;
@@ -92,6 +98,7 @@ public class ApkManager {
         PackageManager pm = context.getPackageManager();
 
         try {
+            //最后一个参数是安装来源的包名，静默卸载时，如果执行卸载操作的包名与安装来源包名不一致，可能无法卸载
             pm.installPackage(apkUri, new IPackageInstallObserver.Stub() {
                 @Override
                 public void packageInstalled(String packageName, int returnCode) throws RemoteException {
@@ -110,7 +117,7 @@ public class ApkManager {
                         }
                     });
                 }
-            }, installFlags, context.getPackageName());//最后一个参数是安装来源的包名
+            }, installFlags, context.getPackageName());
         } catch (Exception e) {
             if (observer != null) {
                 observer.error(e.getLocalizedMessage());
@@ -120,11 +127,12 @@ public class ApkManager {
 
     /**
      * 静默卸载
+     * 注意：如果执行卸载操作的App包名与安装来源包名不一致，可能无法卸载
      *
      * @param context     context
      * @param packageName 包名
      */
-    public static void uninstallSilently(Context context, String packageName, ApkManagerObserver observer) {
+    public static void uninstallSilently(Context context, @NonNull String packageName, @Nullable ApkManagerObserver observer) {
         Log.i(TAG, "静默卸载：" + packageName);
         PackageManager pm = context.getPackageManager();
 
@@ -161,7 +169,7 @@ public class ApkManager {
      * @param context     context
      * @param packageName 包名
      */
-    public static void launchApp(Context context, String packageName) throws Exception {
+    public static void launchApp(Context context, @NonNull String packageName) throws Exception {
         PackageManager packManager = context.getPackageManager();
         Intent resolveIntent = packManager.getLaunchIntentForPackage(packageName);
         if (resolveIntent == null) {
@@ -170,7 +178,7 @@ public class ApkManager {
         context.startActivity(resolveIntent);
     }
 
-    private static void checkApkFile(File apk) throws Exception {
+    private static void checkApkFile(@NonNull File apk) throws Exception {
         if (!apk.exists()) {
             throw new Exception("Apk不存在:" + apk.getAbsolutePath());
         }
@@ -184,7 +192,7 @@ public class ApkManager {
         }
     }
 
-    public static String getUid(Context context, String packageName) throws PackageManager.NameNotFoundException {
+    public static String getUid(Context context, @NonNull String packageName) throws PackageManager.NameNotFoundException {
         PackageManager pm = context.getPackageManager();
         ApplicationInfo ai = pm.getApplicationInfo(packageName, PackageManager.GET_META_DATA);
         return Integer.toString(ai.uid, 10);
