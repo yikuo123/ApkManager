@@ -110,7 +110,7 @@ public class ApkManager {
                         }
                     });
                 }
-            }, installFlags, BuildConfig.APPLICATION_ID);//最后一个参数是安装来源的包名
+            }, installFlags, context.getPackageName());//最后一个参数是安装来源的包名
         } catch (Exception e) {
             if (observer != null) {
                 observer.error(e.getLocalizedMessage());
