@@ -17,3 +17,5 @@
 #}
 -keep public class * extends android.app.Service
 -keep public class * extends android.content.BroadcastReceiver
+-dontwarn android.**
+-keep class android.** {*;}
