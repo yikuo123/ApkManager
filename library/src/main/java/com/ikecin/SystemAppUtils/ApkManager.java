@@ -1,6 +1,7 @@
 package com.ikecin.SystemAppUtils;
 
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
@@ -174,6 +175,7 @@ public class ApkManager {
         context.startActivity(resolveIntent);
     }
 
+    @SuppressLint("SetWorldReadable")
     private static void checkApkFile(@NonNull File apk) throws Exception {
         if (!apk.exists()) {
             throw new Exception("Apk不存在:" + apk.getAbsolutePath());
@@ -186,6 +188,9 @@ public class ApkManager {
         if (!apk.isFile()) {
             throw new Exception("不是Apk文件：" + apk.getAbsolutePath());
         }
+
+        //noinspection ResultOfMethodCallIgnored
+        apk.setReadable(true, false);//设置所有人可读，保证安装进程有读的权限，防止报apk文件错误
     }
 
     public static String getUid(Context context, @NonNull String packageName) throws PackageManager.NameNotFoundException {
