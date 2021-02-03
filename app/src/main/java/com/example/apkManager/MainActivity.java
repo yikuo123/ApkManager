@@ -14,7 +14,7 @@ import java.io.File;
 
 public class MainActivity extends Activity {
 
-    private String mApkDir = Environment.getExternalStorageDirectory() + File.separator + "Download" + File.separator;
+    private final String mApkDir = Environment.getExternalStorageDirectory() + File.separator + "Download" + File.separator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

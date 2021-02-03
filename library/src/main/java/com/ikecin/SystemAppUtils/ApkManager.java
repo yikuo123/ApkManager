@@ -12,15 +12,15 @@ import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.RemoteException;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import android.util.Log;
 
 import java.io.File;
 import java.util.Locale;
 
 public class ApkManager {
-    private static String TAG = ApkManager.class.getSimpleName();
+    private static final String TAG = ApkManager.class.getSimpleName();
 
     /**
      * 普通安装

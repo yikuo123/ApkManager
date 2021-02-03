@@ -16,8 +16,6 @@
 
 package android.content.pm;
 
-import java.util.List;
-
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -28,6 +26,8 @@ import android.content.res.XmlResourceParser;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.util.AndroidException;
+
+import java.util.List;
 
 /**
  * Class for retrieving various kinds of information related to the application
@@ -689,102 +689,91 @@ public abstract class PackageManager {
 
 	/**
 	 * Return code for when package deletion succeeds. This is passed to the
-	 * {@link IPackageDeleteObserver} by {@link #deletePackage()} if the system
+	 * {@link IPackageDeleteObserver} by { #deletePackage()} if the system
 	 * succeeded in deleting the package.
 	 * 
-	 * @hide
 	 */
 	public static final int DELETE_SUCCEEDED = 1;
 
 	/**
 	 * Deletion failed return code: this is passed to the
-	 * {@link IPackageDeleteObserver} by {@link #deletePackage()} if the system
+	 * {@link IPackageDeleteObserver} by { #deletePackage()} if the system
 	 * failed to delete the package for an unspecified reason.
 	 * 
-	 * @hide
 	 */
 	public static final int DELETE_FAILED_INTERNAL_ERROR = -1;
 
 	/**
 	 * Deletion failed return code: this is passed to the
-	 * {@link IPackageDeleteObserver} by {@link #deletePackage()} if the system
+	 * {@link IPackageDeleteObserver} by { #deletePackage()} if the system
 	 * failed to delete the package because it is the active DevicePolicy
 	 * manager.
 	 * 
-	 * @hide
 	 */
 	public static final int DELETE_FAILED_DEVICE_POLICY_MANAGER = -2;
 
 	/**
 	 * Return code that is passed to the {@link IPackageMoveObserver} by
-	 * {@link #movePackage(android.net.Uri, IPackageMoveObserver)} when the
+	 * { #movePackage(android.net.Uri, IPackageMoveObserver)} when the
 	 * package has been successfully moved by the system.
 	 * 
-	 * @hide
 	 */
 	public static final int MOVE_SUCCEEDED = 1;
 	/**
 	 * Error code that is passed to the {@link IPackageMoveObserver} by
-	 * {@link #movePackage(android.net.Uri, IPackageMoveObserver)} when the
+	 * {#movePackage(android.net.Uri, IPackageMoveObserver)} when the
 	 * package hasn't been successfully moved by the system because of
 	 * insufficient memory on specified media.
 	 * 
-	 * @hide
 	 */
 	public static final int MOVE_FAILED_INSUFFICIENT_STORAGE = -1;
 
 	/**
 	 * Error code that is passed to the {@link IPackageMoveObserver} by
-	 * {@link #movePackage(android.net.Uri, IPackageMoveObserver)} if the
+	 * { #movePackage(android.net.Uri, IPackageMoveObserver)} if the
 	 * specified package doesn't exist.
 	 * 
-	 * @hide
 	 */
 	public static final int MOVE_FAILED_DOESNT_EXIST = -2;
 
 	/**
 	 * Error code that is passed to the {@link IPackageMoveObserver} by
-	 * {@link #movePackage(android.net.Uri, IPackageMoveObserver)} if the
+	 * {#movePackage(android.net.Uri, IPackageMoveObserver)} if the
 	 * specified package cannot be moved since its a system package.
 	 * 
-	 * @hide
 	 */
 	public static final int MOVE_FAILED_SYSTEM_PACKAGE = -3;
 
 	/**
 	 * Error code that is passed to the {@link IPackageMoveObserver} by
-	 * {@link #movePackage(android.net.Uri, IPackageMoveObserver)} if the
+	 * {#movePackage(android.net.Uri, IPackageMoveObserver)} if the
 	 * specified package cannot be moved since its forward locked.
 	 * 
-	 * @hide
 	 */
 	public static final int MOVE_FAILED_FORWARD_LOCKED = -4;
 
 	/**
 	 * Error code that is passed to the {@link IPackageMoveObserver} by
-	 * {@link #movePackage(android.net.Uri, IPackageMoveObserver)} if the
+	 * {#movePackage(android.net.Uri, IPackageMoveObserver)} if the
 	 * specified package cannot be moved to the specified location.
 	 * 
-	 * @hide
 	 */
 	public static final int MOVE_FAILED_INVALID_LOCATION = -5;
 
 	/**
 	 * Error code that is passed to the {@link IPackageMoveObserver} by
-	 * {@link #movePackage(android.net.Uri, IPackageMoveObserver)} if the
+	 * {#movePackage(android.net.Uri, IPackageMoveObserver)} if the
 	 * specified package cannot be moved to the specified location.
 	 * 
-	 * @hide
 	 */
 	public static final int MOVE_FAILED_INTERNAL_ERROR = -6;
 
 	/**
 	 * Error code that is passed to the {@link IPackageMoveObserver} by
-	 * {@link #movePackage(android.net.Uri, IPackageMoveObserver)} if the
+	 * { #movePackage(android.net.Uri, IPackageMoveObserver)} if the
 	 * specified package already has an operation pending in the
-	 * {@link PackageHandler} queue.
+	 * {PackageHandler} queue.
 	 * 
-	 * @hide
 	 */
 	public static final int MOVE_FAILED_OPERATION_PENDING = -7;
 
@@ -793,7 +782,6 @@ public abstract class PackageManager {
 	 * should be moved to internal storage if its been installed on external
 	 * media.
 	 * 
-	 * @hide
 	 */
 	public static final int MOVE_INTERNAL = 0x00000001;
 
@@ -1260,7 +1248,7 @@ public abstract class PackageManager {
 	/**
 	 * Add a new dynamic permission to the system. For this to work, your
 	 * package must have defined a permission tree through the
-	 * {@link android.R.styleable#AndroidManifestPermissionTree
+	 * { android.R.styleable#AndroidManifestPermissionTree
 	 * &lt;permission-tree&gt;} tag in its manifest. A package can only add
 	 * permissions to trees that were defined by either its own package or
 	 * another with the same user id; a permission is in a tree if it matches
@@ -2135,13 +2123,12 @@ public abstract class PackageManager {
 	 * @param observer
 	 *            An observer callback to get notified when the package deletion
 	 *            is complete.
-	 *            {@link android.content.pm.IPackageDeleteObserver#packageDeleted(boolean)}
+	 *            {android.content.pm.IPackageDeleteObserver#packageDeleted(boolean)}
 	 *            will be called when that happens. observer may be null to
 	 *            indicate that no callback is desired.
 	 * @param flags
 	 *            - possible values: {@link #DONT_DELETE_DATA}
 	 * 
-	 * @hide
 	 */
 	public abstract void deletePackage(String packageName,
 			IPackageDeleteObserver observer, int flags);
@@ -2497,7 +2484,7 @@ public abstract class PackageManager {
 	 * Attempts to move package resources from internal to external media or
 	 * vice versa. Since this may take a little while, the result will be posted
 	 * back to the given observer. This call may fail if the calling context
-	 * lacks the {@link android.Manifest.permission#MOVE_PACKAGE} permission, if
+	 * lacks the {android.Manifest.permission#MOVE_PACKAGE} permission, if
 	 * the named package cannot be found, or if the named package is a
 	 * "system package".
 	 * 
@@ -2506,7 +2493,7 @@ public abstract class PackageManager {
 	 * @param observer
 	 *            An observer callback to get notified when the package move is
 	 *            complete.
-	 *            {@link android.content.pm.IPackageMoveObserver#packageMoved(boolean)}
+	 *            {android.content.pm.IPackageMoveObserver#packageMoved(boolean)}
 	 *            will be called when that happens. observer may be null to
 	 *            indicate that no callback is desired.
 	 * @param flags

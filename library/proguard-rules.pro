@@ -15,7 +15,28 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
--keep public class * extends android.app.Service
--keep public class * extends android.content.BroadcastReceiver
+
+# 作为lib发布时，不应该混淆和移除公开的方法与属性，参数名也最好不要混淆
+
+# 保留常见属性
+-keepattributes Exceptions,InnerClasses,Signature,Deprecated,SourceFile,LineNumberTable,*Annotation*,EnclosingMethod
+
+# 避免类和接口的方法被混淆和移除,排除BuildConfig
+-keep public class !**.BuildConfig, * { public protected *; }
+-keep public enum * { public protected *; }
+-keep public interface * { *; }
+
+# 避免包含jni方法的类被混淆和移除；避免jni方法的参数与返回值类型被混淆
+-keepclasseswithmembers,includedescriptorclasses class * { native <methods>; }
+
+# 避免异常名称被混淆
+-keepnames class * extends java.lang.Throwable
+
+# 避免参数名称被混淆,该配置暂时没生效，见https://stackoverflow.com/questions/56057586/how-to-keep-class-constructor-argument-parameter-names-with-android-r8
+-keepparameternames
+
+-dontwarn org.apache.**
 -dontwarn android.**
--keep class android.** {*;}
+-dontwarn androidx.**
+-dontwarn java.lang.invoke.**
+-dontwarn javax.annotation.**

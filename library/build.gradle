@@ -1,64 +1,96 @@
-apply plugin: 'com.android.library'
+plugins {
+    id "com.android.library"
+    id "maven-publish"
+}
 
-android {
-    compileSdkVersion 26
-    buildToolsVersion "26.0.3"
+ext {
+    customVersionCode = 1
+    customVersionName = '1.0.0'
+    customGroupId = 'com.ikecin.SystemAppUtils'
+    customArtifactId = 'ApkManager'
 
-    defaultConfig {
-        minSdkVersion 17
-        targetSdkVersion 22
-        versionCode 1
-        versionName "1.0.0"
-        consumerProguardFiles 'proguard-rules.pro'
-    }
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+    android {
+        compileSdkVersion 28
+        defaultConfig {
+            minSdkVersion 19
+            targetSdkVersion 26
+            versionCode customVersionCode
+            versionName customVersionName
+            consumerProguardFiles 'consumer-proguard-rules.pro'
+        }
+
+        buildTypes {
+            release {
+                minifyEnabled true
+                proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro', 'consumer-proguard-rules.pro'
+                debuggable false
+                jniDebuggable false
+                renderscriptDebuggable false
+                zipAlignEnabled true
+            }
+            debug {
+                minifyEnabled false
+                debuggable true
+                jniDebuggable true
+                renderscriptDebuggable true
+                zipAlignEnabled false
+            }
+        }
+        buildFeatures {
+            dataBinding false
+            viewBinding true
+        }
+        compileOptions {
+            sourceCompatibility JavaVersion.VERSION_1_8
+            targetCompatibility JavaVersion.VERSION_1_8
         }
     }
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+
+    repositories {
+        flatDir {
+            dirs 'libs'
+        }
+    }
+
+    dependencies {
+        api fileTree(include: ['*.jar'], dir: 'libs')
+    }
+
+    task sourcesJar(type: Jar) {
+        from android.sourceSets.main.java.sourceFiles
+        archiveClassifier.set("sources")
+    }
+
+    task javadoc(type: Javadoc) {
+        failOnError false
+        options.encoding 'UTF-8'
+        source = android.sourceSets.main.java.sourceFiles
+        classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+        exclude '**/BuildConfig.java', '**/R.java'
+    }
+
+    task javadocJar(type: Jar, dependsOn: javadoc) {
+        archiveClassifier.set("javadoc")
+        from javadoc.destinationDir
+    }
+/**使用命令 gradlew publish 即可发布到本地maven*/
+    afterEvaluate {
+        publishing {
+            publications {
+                lib(MavenPublication) {
+                    from components.release
+                    groupId customGroupId
+                    artifactId customArtifactId
+                    version customVersionName
+                    artifact sourcesJar
+                    artifact javadocJar
+                }
+            }
+            repositories {
+                maven {
+                    url = "$buildDir/repo"
+                }
+            }
+        }
     }
 }
-
-repositories {
-    flatDir {
-        dirs 'libs'
-    }
-}
-
-dependencies {
-    api fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'com.android.support:support-annotations:26.1.0'
-}
-
-//region jitpack
-apply plugin: 'com.github.dcendents.android-maven'
-group = 'com.github.yikuo123'
-
-// build a jar with source files
-task sourcesJar(type: Jar) {
-    from android.sourceSets.main.java.srcDirs
-    classifier = 'sources'
-}
-
-task javadoc(type: Javadoc) {
-    failOnError false
-    source = android.sourceSets.main.java.sourceFiles
-    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
-    classpath += configurations.compile
-}
-
-// build a jar with javadoc
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
-    from javadoc.destinationDir
-}
-
-artifacts {
-    archives sourcesJar
-    archives javadocJar
-}
-//endregion
